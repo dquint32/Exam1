@@ -11,53 +11,47 @@
         h1 { text-align: center; color: var(--primary); }
         .dashboard { display: flex; justify-content: space-around; background: #dfe6e9; padding: 15px; border-radius: 8px; font-weight: bold; margin-bottom: 20px; font-size: 1.2rem; }
         .score-green { color: #00b894; }
-        
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; overflow-x: auto; }
         .tab { padding: 10px 20px; cursor: pointer; background: #ecf0f1; border-radius: 6px; font-weight: bold; transition: 0.2s; white-space: nowrap; border: 2px solid transparent; }
         .tab:hover, .tab.active { background: var(--primary); color: white; }
-        
         .section { display: none; }
         .section.active { display: block; }
-        
         .question-card { background: #fafafa; margin-bottom: 25px; padding: 20px; border: 1px solid #dfe6e9; border-radius: 8px; border-left: 5px solid var(--primary); }
         .tag { display: inline-block; background: #ffeaa7; color: #d35400; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; }
         .options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
         .option { padding: 12px; background: white; border: 2px solid #dfe6e9; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: 500; }
         .option:hover:not(.locked) { border-color: var(--primary); background: #f0f8ff; }
-        
-        /* Feedback Styles */
         .option.correct { background: var(--correct-bg) !important; border-color: var(--correct-border) !important; color: #008f72; font-weight: bold; }
         .option.incorrect { background: var(--wrong-bg) !important; border-color: var(--wrong-border) !important; color: #b32525; text-decoration: line-through; }
         .option.disabled { cursor: not-allowed; opacity: 0.8; pointer-events: none; }
-        
         .explanation { margin-top: 15px; font-size: 0.95em; background: #eef2f5; padding: 15px; border-radius: 6px; border-left: 4px solid var(--primary); display: none; }
         .explanation strong { color: var(--primary); }
-
         .btn { padding: 12px 24px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: 0.2s; }
         .btn:hover { background: #076bbb; }
-
-        /* Speed Round */
         #timer { font-size: 2.5rem; text-align: center; color: #d63031; font-weight: bold; margin-bottom: 20px; }
+        .progress-bar-wrap { background: #dfe6e9; border-radius: 8px; height: 10px; margin-bottom: 20px; }
+        .progress-bar { background: var(--primary); height: 10px; border-radius: 8px; transition: width 0.3s; }
+        .q-num { font-size: 0.8rem; color: #636e72; margin-bottom: 5px; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <h1>CIS 3460 Active Recall Engine</h1>
     <div class="dashboard">
         <div>Score: <span id="score-val" class="score-green">0</span> / <span id="attempt-val">0</span></div>
         <div>Mistakes to Review: <span id="mistake-val">0</span></div>
     </div>
-    
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+
     <div class="tabs">
-        <div class="tab active" onclick="switchTab('mcq-mode')">Standard Mode</div>
+        <div class="tab active" onclick="switchTab('mcq-mode')">📚 Standard Mode</div>
         <div class="tab" onclick="switchTab('speed-mode')">⚡ Speed Round</div>
-        <div class="tab" onclick="switchTab('mistakes-mode')">Review Mistakes</div>
-        <div class="tab" onclick="switchTab('flashcard-mode')">Teach-Back Prompts</div>
+        <div class="tab" onclick="switchTab('mistakes-mode')">❌ Review Mistakes</div>
+        <div class="tab" onclick="switchTab('flashcard-mode')">🗣 Teach-Back Prompts</div>
     </div>
 
     <div id="mcq-mode" class="section active">
-        <p><em>Focus on the patterns. Read the "Why" after every question.</em></p>
+        <p><em>Focus on the patterns. Read the "Why" after every question. 78 questions total.</em></p>
         <div id="mcq-container"></div>
     </div>
 
@@ -81,258 +75,336 @@
 </div>
 
 <script>
-    const questionBank = [
-        const questionBank = [
-        // --- CH 1: PRS, ROLES, & FRAMEWORKS (12 Questions) ---
-        { q: "According to the Pressures-Responses-Support model, 'societal and government regulations' are classified as:", options: ["Responses", "Business Pressures", "Computerized Support", "Work Systems"], correct: "Business Pressures", explanation: "Pressures are environmental factors creating challenges, such as markets, consumer demands, and government regulations.", tag: "Ch 1: PRS Model" },
-        { q: "In the PRS model, what is a 'Response'?", options: ["Tools like BI and DSS", "Environmental factors like technology", "Actions the organization takes to counter pressures, like agility or restructuring", "The data warehouse"], correct: "Actions the organization takes to counter pressures, like agility or restructuring", explanation: "Responses are what the company actively does to survive the pressures.", tag: "Ch 1: PRS Model" },
-        { q: "Mintzberg categorized a manager's roles into three areas. Which category involves dealing directly with people (Figurehead, Leader, Liaison)?", options: ["Interpersonal", "Informational", "Decisional", "Analytical"], correct: "Interpersonal", explanation: "Interpersonal roles are all about human interaction.", tag: "Ch 1: Roles" },
-        { q: "According to Mintzberg, the roles of Monitor, Disseminator, and Spokesperson fall under which category?", options: ["Interpersonal", "Informational", "Decisional", "Structural"], correct: "Informational", explanation: "Informational roles are about managing the flow of data.", tag: "Ch 1: Roles" },
-        { q: "You are acting as a 'Resource Allocator' and 'Disturbance Handler'. Which of Mintzberg's roles are you fulfilling?", options: ["Interpersonal", "Informational", "Decisional", "Operational"], correct: "Decisional", explanation: "Making choices based on information falls under the Decisional category.", tag: "Ch 1: Roles" },
-        { q: "The Gorry and Scott-Morton matrix maps out decisions by combining which two dimensions?", options: ["Business Pressures and Responses", "Degree of Structuredness and Types of Control", "Data Warehousing and Business Analytics", "Intelligence and Design"], correct: "Degree of Structuredness and Types of Control", explanation: "It's a 3x3 matrix crossing Structuredness (Structured, Semi, Unstructured) with Control types (Operational, Managerial, Strategic).", tag: "Ch 1: Gorry/Scott-Morton" },
-        { q: "On the Gorry/Scott-Morton matrix, which system handles highly structured, low-level operational control tasks?", options: ["Decision Support Systems (DSS)", "Management Information Systems (MIS)", "Expert Systems (ES)", "Executive Dashboards"], correct: "Management Information Systems (MIS)", explanation: "MIS is for routine, formula-based, structured operational tasks.", tag: "Ch 1: Gorry/Scott-Morton" },
-        { q: "A problem that uses customized solutions relying on data retrieval, human judgment, and intuition is classified as:", options: ["Structured", "Semistructured", "Unstructured", "Strategic"], correct: "Unstructured", explanation: "Unstructured problems do not have standard mathematical formulas to solve them.", tag: "Ch 1: Problem Types" },
-        { q: "What is a key architectural difference between Business Intelligence (BI) and a Decision Support System (DSS)?", options: ["DSS requires a massive data warehouse.", "BI is analyst-focused for solving specific modeling problems.", "BI implies an enterprise-wide system utilizing an expensive data warehouse.", "BI handles structured MIS problems only."], correct: "BI implies an enterprise-wide system utilizing an expensive data warehouse.", explanation: "BI is large-scale, enterprise-wide, and requires a data warehouse. DSS can be smaller and customized.", tag: "Ch 1: DSS vs BI" },
-        { q: "Which system is typically more executive-focused, utilizing dashboards and performance monitoring?", options: ["MIS", "DSS", "Expert Systems", "Business Intelligence (BI)"], correct: "Business Intelligence (BI)", explanation: "BI is executive-focused, while DSS is typically analyst-focused for specific unstructured problems.", tag: "Ch 1: DSS vs BI" },
-        { q: "What are the four core components of a Work System?", options: ["Intelligence, Design, Choice, Implementation", "Participants, Information, Technologies, Processes", "Data Warehouse, Analytics, BPM, UI", "Pressures, Responses, Support, Analytics"], correct: "Participants, Information, Technologies, Processes", explanation: "A work system consists of human participants and/or machines using info/tech to perform processes.", tag: "Ch 1: Work Systems" },
-        { q: "Why is the concept of a 'Work System' significant when building a DSS?", options: ["Because a DSS replaces the work system entirely.", "Because a DSS does not exist in a vacuum; it is a subsystem that must align with the larger work system.", "Because a work system is the same thing as a data warehouse.", "It only applies to MIS, not DSS."], correct: "Because a DSS does not exist in a vacuum; it is a subsystem that must align with the larger work system.", explanation: "A DSS is just one part (a subsystem) of how an organization actually gets work done.", tag: "Ch 1: Work Systems" },
+const questionBank = [
 
-        // --- CH 2: SIMON'S PHASES & DECISION CONCEPTS (15 Questions) ---
-        { q: "What are Simon's 4 Phases of Decision Making in the correct order?", options: ["Design, Intelligence, Choice, Implementation", "Intelligence, Design, Choice, Implementation", "Intelligence, Choice, Design, Implementation", "Design, Choice, Intelligence, Implementation"], correct: "Intelligence, Design, Choice, Implementation", explanation: "Mnemonic: I Don't Care Internally.", tag: "Ch 2: Simon's Phases" },
-        { q: "Searching the environment for conditions calling for a decision happens in which phase?", options: ["Intelligence", "Design", "Choice", "Implementation"], correct: "Intelligence", explanation: "Intelligence is the first phase, where you scan the environment to find the problem.", tag: "Ch 2: Simon's Phases" },
-        { q: "Decreased sales are happening at your company. Recognizing that the decreased sales are merely a symptom and that poor inventory management is the actual problem occurs during:", options: ["Intelligence", "Design", "Choice", "Implementation"], correct: "Intelligence", explanation: "Distinguishing the real problem from its symptoms is a core task of the Intelligence phase.", tag: "Ch 2: Simon's Phases" },
-        { q: "According to the Intelligence phase, a problem only truly 'exists' if:", options: ["It has a mathematical solution.", "Someone takes responsibility for solving it (Problem Ownership).", "It has reached the Choice phase.", "It is fully unstructured."], correct: "Someone takes responsibility for solving it (Problem Ownership).", explanation: "Without problem ownership and the authority to act, there is no actionable problem.", tag: "Ch 2: Simon's Phases" },
-        { q: "Inventing, developing, and analyzing possible courses of action (generating alternatives) happens in which phase?", options: ["Intelligence", "Design", "Choice", "Implementation"], correct: "Design", explanation: "The Design phase is where you build the model and test 'what-if' scenarios.", tag: "Ch 2: Simon's Phases" },
-        { q: "Because of bounded rationality (cognitive limits) and time constraints, a manager finds a 'good enough' solution rather than the absolute best. This is called:", options: ["Suboptimization", "Optimization", "Satisficing", "Simulation"], correct: "Satisficing", explanation: "Satisficing is accepting a good enough solution when finding the optimal one is impossible or too costly.", tag: "Ch 2: Decision Concepts" },
-        { q: "Reaching a tentative conclusion by analyzing only a portion of a system (e.g., optimizing one department without looking at the whole company) is called:", options: ["Suboptimization", "Satisficing", "Predictive Analytics", "Heuristic Routing"], correct: "Suboptimization", explanation: "Suboptimization focuses on a sub-part of the problem, which might actually harm the overall system.", tag: "Ch 2: Decision Concepts" },
-        { q: "Selecting a specific proposed solution to the model from the available alternatives occurs in which phase?", options: ["Intelligence", "Design", "Choice", "Implementation"], correct: "Choice", explanation: "The Choice phase uses analytical techniques and sensitivity analysis to pick the best alternative.", tag: "Ch 2: Simon's Phases" },
-        { q: "When is a problem officially considered solved in Simon's framework?", options: ["When the optimal choice is selected.", "When the model is designed.", "Only if the Implementation phase is successful.", "When the problem is decomposed."], correct: "Only if the Implementation phase is successful.", explanation: "A decision means nothing until it is successfully introduced into the real world (Implementation).", tag: "Ch 2: Simon's Phases" },
-        { q: "A DSS aims to improve the ___________ of decision making, rather than just its ___________.", options: ["Efficiency; Cost", "Effectiveness (accuracy); Efficiency (speed)", "Automation; Human involvement", "Structure; Complexity"], correct: "Effectiveness (accuracy); Efficiency (speed)", explanation: "DSS focuses on making *better* (more effective) decisions, not just faster/cheaper ones.", tag: "Ch 2: DSS Capabilities" },
-        { q: "True or False: A primary goal of a DSS is to replace the human decision-maker with an automated algorithm.", options: ["True", "False"], correct: "False", explanation: "A DSS supports—but does NOT replace—the human. Humans maintain control over the unstructured parts.", tag: "Ch 2: DSS Capabilities" },
-        { q: "Which type of model assumes total rationality and is designed to find the absolute BEST possible mathematical alternative?", options: ["Descriptive Model", "Normative Model", "Expert System", "Cluster Analysis"], correct: "Normative Model", explanation: "Normative models (like Linear Programming) are used for optimization.", tag: "Ch 2: Models" },
-        { q: "Determining the exact mix of marketing channels to yield the highest possible profit from a strict $10,000 budget requires a:", options: ["Descriptive Model", "Normative Model", "Expert System", "Cluster Analysis"], correct: "Normative Model", explanation: "Because you are maximizing profit under a strict mathematical constraint, it is a normative optimization problem.", tag: "Ch 2: Models" },
-        { q: "Which type of model describes things as they are (or are believed to be) to check performance, but does NOT guarantee an optimal solution?", options: ["Normative Model", "Descriptive Model", "Decision Tree", "Linear Program"], correct: "Descriptive Model", explanation: "Descriptive models (like simulations) test 'what-if' scenarios without finding the absolute mathematical best.", tag: "Ch 2: Models" },
-        { q: "Running a simulation of patient flow in an ER to see how wait times change if you add an extra nurse is an example of a:", options: ["Normative Model", "Descriptive Model", "Classification Model", "Optimization Model"], correct: "Descriptive Model", explanation: "You are describing/simulating a scenario to see the outcome, not mathematically optimizing it.", tag: "Ch 2: Models" },
+    // =====================================================================
+    // CH 1: PRS MODEL & MANAGERIAL ROLES (8 Questions)
+    // =====================================================================
+    { q: "In the Pressures-Responses-Support model, societal/government regulations, market changes, and consumer demands are classified as:", options: ["Responses", "Business Pressures", "Computerized Support", "Work System Inputs"], correct: "Business Pressures", explanation: "Business Pressures are the environmental factors (markets, technology, regulations) that create challenges.", tag: "Ch 1: PRS Model" },
+    { q: "In the PRS model, what is a 'Response'?", options: ["Tools like BI and DSS", "Environmental factors like technology trends", "Actions the organization takes to counter pressures (agility, restructuring)", "The data warehouse layer"], correct: "Actions the organization takes to counter pressures (agility, restructuring)", explanation: "Responses are what the company actively does to survive the pressures it faces.", tag: "Ch 1: PRS Model" },
+    { q: "In the PRS model, tools like BI and DSS that help organizations monitor the environment and respond fall under which component?", options: ["Business Pressures", "Responses", "Computerized Support", "Parameters"], correct: "Computerized Support", explanation: "Computerized Support is the third leg of the PRS model — IT tools that facilitate monitoring and response.", tag: "Ch 1: PRS Model" },
+    { q: "Mintzberg classified manager roles into three areas. Acting as Figurehead, Leader, and Liaison falls under which?", options: ["Interpersonal", "Informational", "Decisional", "Analytical"], correct: "Interpersonal", explanation: "Interpersonal roles are all about direct human interaction.", tag: "Ch 1: Roles" },
+    { q: "According to Mintzberg, Monitor, Disseminator, and Spokesperson fall under which managerial role category?", options: ["Interpersonal", "Informational", "Decisional", "Structural"], correct: "Informational", explanation: "Informational roles center on managing and communicating the flow of data.", tag: "Ch 1: Roles" },
+    { q: "Acting as Resource Allocator, Negotiator, and Disturbance Handler puts a manager in which of Mintzberg's role categories?", options: ["Interpersonal", "Informational", "Decisional", "Operational"], correct: "Decisional", explanation: "Decisional roles involve making choices and commitments using information.", tag: "Ch 1: Roles" },
+    { q: "The Gorry and Scott-Morton framework maps decisions by combining which two dimensions?", options: ["Business Pressures and Responses", "Degree of Structuredness and Types of Control", "Data Warehousing and Business Analytics", "Intelligence Phase and Design Phase"], correct: "Degree of Structuredness and Types of Control", explanation: "It's a 3×3 matrix: Structuredness (Structured/Semi/Unstructured) vs. Control (Operational/Managerial/Strategic).", tag: "Ch 1: Gorry/Scott-Morton" },
+    { q: "On the Gorry/Scott-Morton matrix, which system handles highly STRUCTURED, low-level OPERATIONAL CONTROL tasks?", options: ["Decision Support Systems (DSS)", "Management Information Systems (MIS)", "Expert Systems", "Executive Dashboards"], correct: "Management Information Systems (MIS)", explanation: "MIS handles routine, formula-based, structured operational tasks — the lower-left of the matrix.", tag: "Ch 1: Gorry/Scott-Morton" },
 
-        // --- CH 9: VARIABLES & FORECASTING (10 Questions) ---
-        { q: "A quantitative mathematical model consists of four basic components. Which of these is NOT one of them?", options: ["Decision Variables", "Result Variables", "Suboptimization Variables", "Parameters (Uncontrollable Variables)"], correct: "Suboptimization Variables", explanation: "The four are Decision Variables, Parameters, Intermediate Variables, and Result Variables.", tag: "Ch 9: Variables" },
-        { q: "In a math model, variables that describe the alternative courses of action and are entirely under the control of the manager are called:", options: ["Result Variables", "Decision Variables", "Parameters", "Intermediate Variables"], correct: "Decision Variables", explanation: "Decision variables (What I Do) are what you have the power to change.", tag: "Ch 9: Variables" },
-        { q: "The advertising budget and the number of units to manufacture are examples of:", options: ["Decision Variables", "Result Variables", "Parameters", "Intermediate Variables"], correct: "Decision Variables", explanation: "You control the budget and the manufacturing output.", tag: "Ch 9: Variables" },
-        { q: "Factors that affect the outcome of a model but are NOT under the control of the decision-maker are called:", options: ["Decision Variables", "Result Variables", "Parameters (Uncontrollable Variables)", "Dependent Variables"], correct: "Parameters (Uncontrollable Variables)", explanation: "Parameters (What I Pass through) act as environmental constraints.", tag: "Ch 9: Variables" },
-        { q: "The inflation rate, legal tax regulations, and competitor actions are examples of:", options: ["Decision Variables", "Result Variables", "Parameters (Uncontrollable Variables)", "Intermediate Variables"], correct: "Parameters (Uncontrollable Variables)", explanation: "You cannot control inflation or the law; they are parameters.", tag: "Ch 9: Variables" },
-        { q: "Variables that reflect the level of effectiveness of the system and indicate how well the goal was attained are called:", options: ["Decision Variables", "Result (Outcome) Variables", "Parameters", "Normative Variables"], correct: "Result (Outcome) Variables", explanation: "Result variables (My Reward) are the dependent outputs.", tag: "Ch 9: Variables" },
-        { q: "Total profit, market share, and customer satisfaction are examples of:", options: ["Decision Variables", "Result (Outcome) Variables", "Parameters", "Uncontrollable Variables"], correct: "Result (Outcome) Variables", explanation: "These are the final outputs you measure to see if your decisions worked.", tag: "Ch 9: Variables" },
-        { q: "What is the process of predicting the future, which serves as the cornerstone of predictive analytics?", options: ["Satisficing", "Forecasting", "Suboptimization", "Clustering"], correct: "Forecasting", explanation: "Forecasting predicts future events so you can optimize before they happen.", tag: "Ch 9: Forecasting" },
-        { q: "Why is forecasting absolutely essential for constructing decision models?", options: ["Because data mining cannot use historical data.", "Because past decisions directly control future inflation.", "Because when a decision is actually implemented, the results will occur in the future.", "Because forecasting changes uncontrollable parameters."], correct: "Because when a decision is actually implemented, the results will occur in the future.", explanation: "Decisions impact the future, so models must use forecasted future data to be useful.", tag: "Ch 9: Forecasting" },
-        { q: "True or False: A key benefit of DSS is running what-if analyses on past data to change historical outcomes.", options: ["True", "False"], correct: "False", explanation: "There is no point in running what-if on the past; you cannot change it. You only run it on forecasted futures.", tag: "Ch 9: Forecasting" },
+    // =====================================================================
+    // CH 1: DSS DEFINITION, TYPES, BI, WORK SYSTEMS (8 Questions)
+    // =====================================================================
+    { q: "A problem with no standard solution method that relies on human judgment, intuition, and data retrieval is classified as:", options: ["Structured", "Semistructured", "Unstructured", "Operational"], correct: "Unstructured", explanation: "Unstructured problems have no standard mathematical formula — they require judgment and creativity.", tag: "Ch 1: Problem Types" },
+    { q: "A problem that combines standard quantitative models for part of the solution WITH human judgment for the rest is:", options: ["Structured", "Semistructured", "Unstructured", "Descriptive"], correct: "Semistructured", explanation: "Semistructured problems are part formula, part judgment — a blend of MIS and DSS support.", tag: "Ch 1: Problem Types" },
+    { q: "Which is the best definition of a DSS?", options: ["A large-scale enterprise data warehouse for executives", "Interactive computer-based systems that help decision makers use data and models to solve unstructured problems", "A system that automates structured operational tasks", "A reporting tool for monitoring daily sales figures"], correct: "Interactive computer-based systems that help decision makers use data and models to solve unstructured problems", explanation: "This is the textbook definition. The key words are 'interactive,' 'support,' and 'unstructured.'", tag: "Ch 1: DSS Definition" },
+    { q: "The authors describe DSS in two ways. One is a broad umbrella term; the other is:", options: ["A specific application supporting a particular decision directly", "A synonym for Business Intelligence", "A data warehouse with analytics", "An Expert System"], correct: "A specific application supporting a particular decision directly", explanation: "The two types: DSS as a broad umbrella concept vs. DSS as a narrow, specific decision-support application.", tag: "Ch 1: DSS Types" },
+    { q: "BI implies an enterprise-wide system with an expensive data warehouse; a DSS can be smaller and customized. BI is ___-focused while DSS is ___-focused.", options: ["Executive; Analyst", "Analyst; Executive", "Operational; Strategic", "Strategic; Operational"], correct: "Executive; Analyst", explanation: "BI is executive-focused (dashboards, KPIs). DSS is analyst-focused (specific models and unstructured problems).", tag: "Ch 1: DSS vs BI" },
+    { q: "What are the four major components of the high-level BI architecture?", options: ["Intelligence, Design, Choice, Implementation", "Data Warehouse, Business Analytics, BPM, User Interface", "Participants, Information, Technologies, Processes", "Pressures, Responses, Support, Analytics"], correct: "Data Warehouse, Business Analytics, BPM, User Interface", explanation: "BI Architecture: Data Warehouse → Business Analytics → Business Performance Management → User Interface (dashboard).", tag: "Ch 1: BI Architecture" },
+    { q: "A Work System is defined as a system where human participants and/or machines perform work using information and technology. What are its four core parts?", options: ["Intelligence, Design, Choice, Implementation", "Data Warehouse, Analytics, BPM, UI", "Participants, Information, Technologies, Processes", "Pressures, Responses, Support, Feedback"], correct: "Participants, Information, Technologies, Processes", explanation: "A Work System = Participants + Information + Technologies + Processes producing products/services.", tag: "Ch 1: Work Systems" },
+    { q: "Why is the Work System concept significant in the context of building a DSS?", options: ["Because a DSS completely replaces the existing work system.", "Because a DSS is a subsystem embedded in the larger work system and must align with it.", "Because Work Systems are only relevant to MIS, not DSS.", "Because Work Systems define the data warehouse schema."], correct: "Because a DSS is a subsystem embedded in the larger work system and must align with it.", explanation: "A DSS doesn't exist in a vacuum — it must align with and support the broader organizational work system.", tag: "Ch 1: Work Systems" },
 
-        // --- CH 5 & PROVOST: DATA MINING & CRISP-DM (18 Questions) ---
-        { q: "Data mining is defined as the nontrivial process of identifying valid, novel, potentially useful, and ultimately understandable patterns in data. It is also known as:", options: ["Knowledge extraction", "Normative optimization", "Descriptive simulation", "Bounded rationality"], correct: "Knowledge extraction", explanation: "Data mining extracts hidden knowledge/patterns from databases.", tag: "Ch 5: Data Mining" },
-        { q: "In predictive analytics, the term for customers switching from one company to another (e.g., leaving when a cell contract expires) is:", options: ["Clustering", "Churn", "Satisficing", "Suboptimization"], correct: "Churn", explanation: "Churn is highly expensive, making churn prediction a massive data science use case.", tag: "Provost 1: Churn" },
-        { q: "Why do companies care so much about predicting Customer Churn?", options: ["Because it is required by government regulations.", "Because it costs much more to acquire a new customer than to retain an existing one.", "Because churn models have zero entropy.", "Because it is an unsupervised method."], correct: "Because it costs much more to acquire a new customer than to retain an existing one.", explanation: "Retention is cheaper than acquisition, so proactive incentives save money.", tag: "Provost 1: Churn" },
-        { q: "What is the fundamental difference between Supervised and Unsupervised data mining methods?", options: ["Supervised methods use numbers; Unsupervised use text.", "Supervised methods have a pre-defined target variable to predict; Unsupervised do not.", "Supervised methods are done by humans; Unsupervised by machines.", "There is no difference."], correct: "Supervised methods have a pre-defined target variable to predict; Unsupervised do not.", explanation: "Supervised = Target Label. Unsupervised = No Label (exploratory).", tag: "Provost 2: Supervised vs Unsupervised" },
-        { q: "If your goal is to answer 'Can we find groups of customers who have high likelihoods of canceling their service?', you are using a:", options: ["Supervised Method", "Unsupervised Method", "Descriptive Simulation", "Normative Model"], correct: "Supervised Method", explanation: "Because there is a specific target ('Will they cancel?'), it is supervised.", tag: "Provost 2: Supervised" },
-        { q: "Classification and Regression are examples of:", options: ["Unsupervised Methods", "Supervised Methods", "Normative Models", "Expert Systems"], correct: "Supervised Methods", explanation: "Both predict specific targets (categorical for Classification, numeric for Regression).", tag: "Provost 2: Methods" },
-        { q: "If there is NO specific target variable and the algorithm is left to explore the data to find natural similarities, it is an:", options: ["Unsupervised Method", "Supervised Method", "Optimization Method", "Evaluation Method"], correct: "Unsupervised Method", explanation: "Unsupervised learning just looks for natural structures without a predefined goal.", tag: "Provost 2: Unsupervised" },
-        { q: "Clustering and Market-Basket Analysis (Co-occurrence Grouping) are examples of:", options: ["Supervised Methods", "Unsupervised Methods", "Classification Models", "Regression Models"], correct: "Unsupervised Methods", explanation: "They group data without a predefined target variable.", tag: "Provost 2: Methods" },
-        { q: "If you want to predict a specific NUMERIC target (e.g., 'How much money will this customer spend?'), you should use:", options: ["Classification", "Regression", "Clustering", "Decision Trees"], correct: "Regression", explanation: "Regression is supervised and predicts a continuous number.", tag: "Provost 2: Methods" },
-        { q: "If you want to predict a specific CATEGORICAL target (e.g., 'Will this customer churn? Yes/No'), you should use:", options: ["Regression", "Clustering", "Classification", "Profiling"], correct: "Classification", explanation: "Classification predicts discrete categories or classes.", tag: "Provost 2: Methods" },
-        { q: "How many steps are in the highly iterative CRISP-DM methodology?", options: ["4", "5", "6", "10"], correct: "6", explanation: "The 6 steps: Business Understanding, Data Understanding, Data Prep, Modeling, Evaluation, Deployment.", tag: "Ch 5: CRISP-DM" },
-        { q: "In CRISP-DM, explicitly defining the managerial need and recasting it into a data science problem happens during:", options: ["Business Understanding", "Data Understanding", "Data Preparation", "Modeling"], correct: "Business Understanding", explanation: "This is the very first step where the business objective is set.", tag: "Provost 2: CRISP-DM" },
-        { q: "Estimating the costs/benefits of data sources and digging beneath the surface to uncover the structure of the problem (e.g., realizing Medicare fraud lacks a reliable target) happens during:", options: ["Business Understanding", "Data Understanding", "Data Preparation", "Evaluation"], correct: "Data Understanding", explanation: "Data Understanding grasps the strengths and limitations of the data sources.", tag: "Provost 2: CRISP-DM" },
-        { q: "Which step in CRISP-DM is the most time-consuming, taking up to 80% of the project?", options: ["Data Understanding", "Data Preparation", "Modeling", "Evaluation"], correct: "Data Preparation", explanation: "Cleaning, handling missing values, and transforming data takes massive amounts of time.", tag: "Ch 5: CRISP-DM" },
-        { q: "A key concern during Data Preparation is avoiding 'leaks'. What is a data leak?", options: ["When the database crashes.", "When historical data contains information about the target variable that wouldn't actually be available at decision time.", "When unsupervised algorithms delete data.", "When customer privacy is violated."], correct: "When historical data contains information about the target variable that wouldn't actually be available at decision time.", explanation: "Leaks ruin predictive models because they let the model 'cheat' using future knowledge.", tag: "Provost 2: CRISP-DM" },
-        { q: "Assessing models rigorously to ensure they actually satisfy the original business goals BEFORE moving to production occurs in which phase?", options: ["Modeling", "Evaluation", "Deployment", "Business Understanding"], correct: "Evaluation", explanation: "Evaluation ensures the model isn't just mathematically sound, but practically useful for the business.", tag: "Provost 2: CRISP-DM" },
-        { q: "To prevent bias, analysts divide the dataset into multiple subsets, training and testing the model multiple times to ensure every data point is used for both. This is called:", options: ["Simple Split Validation", "k-Fold Cross-Validation", "Entropy Partitioning", "Decision Tree Split"], correct: "k-Fold Cross-Validation", explanation: "k-Fold reduces the bias that can occur with a single, simple random split.", tag: "Ch 5: Validation" },
-        { q: "A supervised classification model that acts like a flowchart, recursively dividing data into purer groups based on attributes until a final label is reached, is called a:", options: ["Cluster Analysis", "Regression Model", "Decision Tree", "Normative Model"], correct: "Decision Tree", explanation: "Decision trees split data recursively to classify outcomes like 'High Risk' or 'Low Risk'.", tag: "Ch 5: Models" },
+    // =====================================================================
+    // CH 2: SIMON'S PHASES OF DECISION MAKING (10 Questions)
+    // =====================================================================
+    { q: "What are Simon's 4 Phases of Decision Making in the CORRECT order?", options: ["Design, Intelligence, Choice, Implementation", "Intelligence, Design, Choice, Implementation", "Intelligence, Choice, Design, Implementation", "Design, Choice, Intelligence, Implementation"], correct: "Intelligence, Design, Choice, Implementation", explanation: "Mnemonic: I Don't Care Internally. Intelligence → Design → Choice → Implementation.", tag: "Ch 2: Simon's Phases" },
+    { q: "Scanning the environment for conditions that call for a decision — finding the problem — happens in which phase?", options: ["Intelligence", "Design", "Choice", "Implementation"], correct: "Intelligence", explanation: "The Intelligence phase is about recognizing that a problem or opportunity exists.", tag: "Ch 2: Simon's Phases" },
+    { q: "EXAM SCENARIO: Decreased sales are happening. Recognizing that the decreased sales are only a SYMPTOM and that poor inventory management is the real problem occurs during:", options: ["Intelligence", "Design", "Choice", "Implementation"], correct: "Intelligence", explanation: "Distinguishing the real problem from its symptoms (problem classification) is a core task of Intelligence.", tag: "Ch 2: Simon's Phases" },
+    { q: "According to the Intelligence phase, a problem only truly 'exists' when:", options: ["It has a mathematical solution.", "Someone takes responsibility for solving it (Problem Ownership) and has authority to act.", "It reaches the Choice phase.", "It is classified as fully unstructured."], correct: "Someone takes responsibility for solving it (Problem Ownership) and has authority to act.", explanation: "Problem Ownership: without a responsible owner with authority, no action can be taken.", tag: "Ch 2: Simon's Phases" },
+    { q: "What is Problem Decomposition?", options: ["Finding the root symptom of a problem", "Breaking a complex problem into smaller, manageable subproblems", "Selecting among alternatives in the Choice phase", "The process of putting a solution into effect"], correct: "Breaking a complex problem into smaller, manageable subproblems", explanation: "Problem Decomposition (from the Intelligence phase) makes overwhelming problems tractable.", tag: "Ch 2: Simon's Phases" },
+    { q: "Inventing, developing, and analyzing possible courses of action — generating alternatives — happens in which phase?", options: ["Intelligence", "Design", "Choice", "Implementation"], correct: "Design", explanation: "The Design phase is where you build the model and generate 'what-if' scenarios.", tag: "Ch 2: Simon's Phases" },
+    { q: "Selecting a specific proposed solution from the available alternatives is the goal of which phase?", options: ["Intelligence", "Design", "Choice", "Implementation"], correct: "Choice", explanation: "The Choice phase uses analytical techniques, heuristics, and sensitivity analysis to pick the best alternative.", tag: "Ch 2: Simon's Phases" },
+    { q: "When is a decision problem officially considered SOLVED in Simon's framework?", options: ["When the optimal mathematical solution is found.", "When the model is fully designed.", "Only when the Implementation phase is successful.", "When problem ownership is assigned."], correct: "Only when the Implementation phase is successful.", explanation: "A decision means nothing until it is successfully introduced into the real world.", tag: "Ch 2: Simon's Phases" },
+    { q: "Due to cognitive limits (bounded rationality) and time pressure, a manager accepts a 'good enough' solution rather than the mathematically optimal one. This is called:", options: ["Suboptimization", "Optimization", "Satisficing", "Simulation"], correct: "Satisficing", explanation: "Satisficing: accepting a satisfactory solution when finding the true optimum is too costly or impossible.", tag: "Ch 2: Decision Concepts" },
+    { q: "Optimizing only one department's performance without analyzing the impact on the whole company is an example of:", options: ["Suboptimization", "Satisficing", "Normative Modeling", "Descriptive Simulation"], correct: "Suboptimization", explanation: "Suboptimization: analyzing only a portion of the system, which may harm the overall system even while helping the sub-part.", tag: "Ch 2: Decision Concepts" },
 
-        // --- PROVOST 3: ENTROPY & INFORMATION GAIN (10 Questions) ---
-        { q: "In data mining, Entropy is a mathematical measure of what?", options: ["The speed of the algorithm.", "The amount of disorder or impurity within a specific set of data.", "The number of decision variables.", "The financial cost of customer churn."], correct: "The amount of disorder or impurity within a specific set of data.", explanation: "Entropy measures how 'mixed up' the data segment is.", tag: "Provost 3: Entropy" },
-        { q: "If a customer segment has exactly a 50/50 split of customers who churned and customers who stayed, its Entropy score is:", options: ["Zero", "Minimum", "Maximum", "0.25"], correct: "Maximum", explanation: "A 50/50 split is entirely uncertain (high disorder), so entropy is at its maximum.", tag: "Provost 3: Entropy" },
-        { q: "If a segment is completely pure (e.g., every single customer in it churned), its Entropy score is:", options: ["1.0", "Maximum", "Zero", "0.50"], correct: "Zero", explanation: "Complete purity means zero disorder, therefore zero entropy.", tag: "Provost 3: Entropy" },
-        { q: "Why do we care about Entropy in data mining?", options: ["It calculates profit.", "It is the fundamental measurement used for separating groups and calculating Information Gain.", "It acts as a descriptive simulation.", "It proves bounded rationality."], correct: "It is the fundamental measurement used for separating groups and calculating Information Gain.", explanation: "We measure entropy before and after a split to see if the split was useful.", tag: "Provost 3: Entropy" },
-        { q: "What metric measures how much an attribute improves (decreases) entropy over the whole segmentation it creates?", options: ["Information Gain", "Suboptimization", "K-Fold Bias", "Normative Value"], correct: "Information Gain", explanation: "Information Gain = Drop in Entropy.", tag: "Provost 3: Info Gain" },
-        { q: "Which of the following describes a highly predictive attribute for a decision tree?", options: ["High Information Gain / Large drop in Entropy", "Low Information Gain / Large drop in Entropy", "High Information Gain / Large increase in Entropy", "Low Information Gain / No change in Entropy"], correct: "High Information Gain / Large drop in Entropy", explanation: "You want an attribute that causes a massive drop in disorder.", tag: "Provost 3: Info Gain" },
-        { q: "SCENARIO: You are building a decision tree with 4 attributes that have entropy scores: 0.95, 0.70, 0.40, and 0.15. You need to pick two. Which do you choose?", options: ["0.95 and 0.70", "0.70 and 0.40", "0.40 and 0.15", "0.95 and 0.15"], correct: "0.40 and 0.15", explanation: "You always choose the attributes with the lowest entropy scores.", tag: "Provost 3: Scenario" },
-        { q: "SCENARIO CONTINUED: Why did you choose the attributes with scores of 0.40 and 0.15?", options: ["Because high entropy indicates high purity.", "Because low entropy indicates high purity, maximizing Information Gain.", "Because 0.15 is closest to the maximum disorder.", "Because they represent unsupervised clusters."], correct: "Because low entropy indicates high purity, maximizing Information Gain.", explanation: "Lowest entropy = Highest purity = Best at separating data.", tag: "Provost 3: Scenario" },
-        { q: "A fair coin (50% heads, 50% tails) is a visual metaphor for:", options: ["Zero Entropy", "High Entropy", "Information Gain", "Satisficing"], correct: "High Entropy", explanation: "The outcome is totally uncertain, meaning maximum disorder.", tag: "Provost 3: Visuals" },
-        { q: "A trick coin with heads on both sides (100% heads) is a visual metaphor for:", options: ["Maximum Entropy", "Zero Entropy", "Suboptimization", "Normative Modeling"], correct: "Zero Entropy", explanation: "The outcome is perfectly predictable, meaning zero disorder.", tag: "Provost 3: Visuals" },
+    // =====================================================================
+    // CH 2: TYPES OF MODELS (7 Questions)
+    // =====================================================================
+    { q: "A model designed to find the ABSOLUTE BEST possible alternative, assuming total rationality, is a:", options: ["Descriptive Model", "Normative Model", "Expert System", "Simulation Model"], correct: "Normative Model", explanation: "Normative models = optimization. They find the mathematically best solution (e.g., Linear Programming).", tag: "Ch 2: Models" },
+    { q: "Determining the exact mix of marketing channels to maximize profit from a strict $10,000 budget requires a:", options: ["Descriptive Model", "Normative Model", "Expert System", "Cluster Analysis"], correct: "Normative Model", explanation: "Maximizing profit under a strict constraint = normative optimization problem.", tag: "Ch 2: Models" },
+    { q: "A model that describes things as they ARE or are believed to be, tests 'what-if' scenarios, but does NOT guarantee an optimal solution is a:", options: ["Normative Model", "Descriptive Model", "Expert System", "Linear Program"], correct: "Descriptive Model", explanation: "Descriptive models (simulations) explore consequences of alternatives without guaranteeing the mathematical best.", tag: "Ch 2: Models" },
+    { q: "Running a simulation of patient flow in an ER to see how wait times change if you add a nurse is an example of a:", options: ["Normative Model", "Descriptive/Simulation Model", "Classification Model", "Optimization Model"], correct: "Descriptive/Simulation Model", explanation: "You are describing/simulating a scenario to observe the outcome — not finding a mathematical optimum.", tag: "Ch 2: Models" },
+    { q: "What is SIMULATION as a decision-support tool?", options: ["Finding the mathematical optimum using linear programming", "A technique that imitates real-world operations to test what-if scenarios without disrupting real operations", "Supervised classification of new data records", "Selecting the best alternative using sensitivity analysis"], correct: "A technique that imitates real-world operations to test what-if scenarios without disrupting real operations", explanation: "Simulation = descriptive modeling of reality for experimentation.", tag: "Ch 2: Models" },
+    { q: "A DSS aims to improve the _______ of decision making, not just its _______.", options: ["Efficiency (speed); Effectiveness (accuracy)", "Effectiveness (accuracy); Efficiency (speed)", "Automation; Human involvement", "Cost; Structure"], correct: "Effectiveness (accuracy); Efficiency (speed)", explanation: "DSS focuses on making BETTER decisions (effectiveness), not just faster/cheaper ones (efficiency).", tag: "Ch 2: DSS Capabilities" },
+    { q: "True or False: A primary goal of a DSS is to replace the human decision-maker with automation.", options: ["True", "False"], correct: "False", explanation: "A DSS SUPPORTS — it does NOT replace — the human. Humans maintain control over the unstructured parts.", tag: "Ch 2: DSS Capabilities" },
 
-        // --- CH 11: EXPERT SYSTEMS (10 Questions) ---
-        { q: "Computer-based systems that use specialized knowledge to attain high-level decision performance in narrowly defined domains are called:", options: ["Descriptive Simulations", "Expert Systems", "K-Fold Algorithms", "Data Warehouses"], correct: "Expert Systems", explanation: "Expert Systems mimic human experts in narrow fields.", tag: "Ch 11: Expert Systems" },
-        { q: "What is the difference between an Expert and Expertise?", options: ["Experts are machines; expertise is human.", "Experts are people with special knowledge; expertise is the task-specific explicit/implicit knowledge they possess.", "They mean the exact same thing.", "Experts use math; expertise uses logic."], correct: "Experts are people with special knowledge; expertise is the task-specific explicit/implicit knowledge they possess.", explanation: "The human is the expert; the knowledge itself is the expertise.", tag: "Ch 11: Expert Systems" },
-        { q: "Instead of purely mathematical calculations, Expert Systems attain high-level performance using logic, 'if-then' rules, and heuristics. This is known as:", options: ["Normative Optimization", "Symbolic Reasoning", "Descriptive Simulation", "Clustering"], correct: "Symbolic Reasoning", explanation: "ES uses symbols and logic rather than math equations.", tag: "Ch 11: Expert Systems" },
-        { q: "A key feature of an Expert System is 'Self-Knowledge'. What does this mean?", options: ["It can write its own code.", "It can examine its own reasoning and explain WHY it reached a specific conclusion.", "It knows the personal details of the user.", "It can switch from Supervised to Unsupervised learning automatically."], correct: "It can examine its own reasoning and explain WHY it reached a specific conclusion.", explanation: "It can justify its answers to the user.", tag: "Ch 11: Expert Systems" },
-        { q: "Which core component of an Expert System contains the actual facts of the problem and the heuristics/rules (the knowledge nuggets)?", options: ["Inference Engine", "Knowledge Base", "User Interface", "Explanation Subsystem"], correct: "Knowledge Base", explanation: "The Knowledge Base is the foundation containing the specialized rules.", tag: "Ch 11: Expert Systems" },
-        { q: "Which core component is considered the 'brain' or control structure that provides the methodology for reasoning through the rules?", options: ["Knowledge Base", "Inference Engine", "Blackboard", "Knowledge Acquisition"], correct: "Inference Engine", explanation: "The Inference Engine reasons through the Knowledge Base to formulate a conclusion.", tag: "Ch 11: Expert Systems" },
-        { q: "In an Expert System, what is the 'Blackboard' (Workplace)?", options: ["The interface where rules are coded.", "The working memory area recording the current problem description and intermediate hypotheses.", "The database of historical company transactions.", "The self-learning mechanism."], correct: "The working memory area recording the current problem description and intermediate hypotheses.", explanation: "It is the scratchpad where the system tracks its current progress.", tag: "Ch 11: Expert Systems" },
-        { q: "Which subsystem of an Expert System traces the responsibility for conclusions so the user can ask 'How did you reach this conclusion?'", options: ["Blackboard", "Knowledge-Refining System", "Explanation Subsystem (Justifier)", "Inference Engine"], correct: "Explanation Subsystem (Justifier)", explanation: "The Justifier provides the system's self-knowledge.", tag: "Ch 11: Expert Systems" },
-        { q: "Extracting tacit knowledge from human experts and transforming it into computer rules is notoriously difficult. This bottleneck process is called:", options: ["Knowledge Base Assembly", "Knowledge Acquisition", "Symbolic Translation", "Heuristic Routing"], correct: "Knowledge Acquisition", explanation: "Getting the knowledge out of the human's head is the hardest part.", tag: "Ch 11: Expert Systems" },
-        { q: "MYCIN (medical diagnosis) and XCON (configuring computer systems) are classic examples of what?", options: ["Data Warehouses", "Expert Systems", "Unsupervised Clustering Algorithms", "Descriptive Models"], correct: "Expert Systems", explanation: "They are the famous historical examples of Expert Systems.", tag: "Ch 11: Expert Systems" },
+    // =====================================================================
+    // CH 9: VARIABLES, FORECASTING, MODEL STRUCTURE (8 Questions)
+    // =====================================================================
+    { q: "In a quantitative model, variables that describe alternative courses of action and are ENTIRELY UNDER THE CONTROL of the manager are:", options: ["Result Variables", "Decision Variables", "Parameters", "Intermediate Variables"], correct: "Decision Variables", explanation: "Decision Variables = What I Control (e.g., how much to spend on advertising, how many units to produce).", tag: "Ch 9: Variables" },
+    { q: "The advertising budget and number of units to manufacture are examples of:", options: ["Decision Variables", "Result Variables", "Parameters", "Uncontrollable Variables"], correct: "Decision Variables", explanation: "You have direct control over these choices.", tag: "Ch 9: Variables" },
+    { q: "Factors that affect the model's outcome but are NOT under the decision-maker's control are:", options: ["Decision Variables", "Result Variables", "Parameters (Uncontrollable Variables)", "Normative Variables"], correct: "Parameters (Uncontrollable Variables)", explanation: "Parameters = What the environment imposes (inflation, taxes, competitor actions, legal regulations).", tag: "Ch 9: Variables" },
+    { q: "The inflation rate, legal tax regulations, and competitor actions in a business model are examples of:", options: ["Decision Variables", "Result Variables", "Parameters (Uncontrollable Variables)", "Intermediate Variables"], correct: "Parameters (Uncontrollable Variables)", explanation: "You cannot control inflation or the law — they are parameters passed into your model.", tag: "Ch 9: Variables" },
+    { q: "Variables that reflect how well the goal was attained (the dependent outputs of the model) are called:", options: ["Decision Variables", "Result (Outcome) Variables", "Parameters", "Normative Variables"], correct: "Result (Outcome) Variables", explanation: "Result Variables = My Reward (e.g., total profit, market share, customer satisfaction).", tag: "Ch 9: Variables" },
+    { q: "Total profit, market share gained, and customer satisfaction scores are examples of:", options: ["Decision Variables", "Result (Outcome) Variables", "Parameters", "Uncontrollable Variables"], correct: "Result (Outcome) Variables", explanation: "These are the final outputs you measure to evaluate whether your decisions worked.", tag: "Ch 9: Variables" },
+    { q: "What is FORECASTING and why is it the cornerstone of predictive analytics?", options: ["It's the process of finding optimal decisions from historical data.", "It's the process of predicting the future, essential because decision implementations produce results in the future.", "It's the simulation of current system states.", "It's the classification of unsupervised clusters."], correct: "It's the process of predicting the future, essential because decision implementations produce results in the future.", explanation: "Decisions are implemented NOW but their results happen in the FUTURE — so forecasting is critical.", tag: "Ch 9: Forecasting" },
+    { q: "True or False: It is useful to run 'what-if' analysis on PAST data to improve historical outcomes.", options: ["True", "False"], correct: "False", explanation: "You cannot change the past. What-if analysis is only meaningful for forecasted FUTURE scenarios.", tag: "Ch 9: Forecasting" },
 
-        // --- SCENARIOS (5 Questions) ---
-        { q: "SCENARIO: You need to diagnose a complex, rare mechanical failure in an aviation engine based on qualitative symptoms. Which model should you use?", options: ["Optimization Model", "Cluster Analysis", "Expert System", "Descriptive Simulation"], correct: "Expert System", explanation: "Capturing implicit heuristics to handle a narrow, semistructured diagnosis problem requires an Expert System.", tag: "Scenarios" },
-        { q: "SCENARIO: You must decide exactly how many units of Product A and B to build to maximize profit without exceeding a strict $50,000 materials budget. Which model?", options: ["Optimization Model (Linear Programming)", "Cluster Analysis", "Expert System", "Descriptive Simulation"], correct: "Optimization Model (Linear Programming)", explanation: "Finding the absolute best mathematical allocation of quantitative resources is a normative/optimization problem.", tag: "Scenarios" },
-        { q: "SCENARIO: You want to predict which of your current telecom customers are most likely to cancel their service next month based on their past usage data. Which model?", options: ["Descriptive Simulation", "Predictive Data Mining Model (Classification)", "Optimization Model", "Expert System"], correct: "Predictive Data Mining Model (Classification)", explanation: "Because there is a specific categorical target variable ('Will Cancel'), you need a supervised classification model.", tag: "Scenarios" },
-        { q: "SCENARIO: You want to see how wait times in a hospital emergency room will change if you add two extra triage nurses on Saturday nights. Which model?", options: ["Optimization Model", "Cluster Analysis", "Expert System", "Descriptive/Simulation Model"], correct: "Descriptive/Simulation Model", explanation: "You are imitating reality to experiment with different 'what-if' configurations without guaranteeing the best outcome.", tag: "Scenarios" },
-        { q: "SCENARIO: You need to group a massive database of thousands of retail customers into distinct buying segments to create targeted marketing campaigns, but you don't know what the segments should look like yet. Which model?", options: ["Predictive Classification", "Cluster Analysis", "Optimization Model", "Expert System"], correct: "Cluster Analysis", explanation: "You have unlabeled data and need an unsupervised algorithm to find natural groupings.", tag: "Scenarios" }
-    ];
-        // --- MODEL SELECTION SCENARIOS ---
-        { q: "SCENARIO: You need to diagnose a complex, rare mechanical failure in an aviation engine based on qualitative symptoms. Which model should you use?", options: ["Optimization Model", "Cluster Analysis", "Expert System", "Descriptive Simulation"], correct: "Expert System", explanation: "Capturing implicit heuristics to handle a narrow, semistructured diagnosis problem requires an Expert System.", tag: "Scenarios" },
-        { q: "SCENARIO: You must decide how many standard and deluxe laptops to build to maximize profit without exceeding a strict $100k materials budget. Which model?", options: ["Optimization Model (Linear Programming)", "Cluster Analysis", "Expert System", "Descriptive Simulation"], correct: "Optimization Model (Linear Programming)", explanation: "Finding the absolute best mathematical allocation of quantitative resources is an optimization (normative) problem.", tag: "Scenarios" },
-        { q: "SCENARIO: You want to predict which current customers will cancel their service next month based on past usage. Which model?", options: ["Descriptive Simulation", "Predictive Data Mining Model (Classification)", "Optimization Model", "Expert System"], correct: "Predictive Data Mining Model (Classification)", explanation: "Because there is a specific target variable ('Will Cancel'), you need a supervised classification model.", tag: "Scenarios" },
-        { q: "SCENARIO: You want to see how hospital ER wait times change if you add two extra nurses on a Saturday night. Which model?", options: ["Optimization Model", "Cluster Analysis", "Expert System", "Descriptive/Simulation Model"], correct: "Descriptive/Simulation Model", explanation: "You are imitating reality to test 'what-if' configurations without guaranteeing the absolute best outcome.", tag: "Scenarios" },
-        { q: "SCENARIO: You have a database of 50,000 customers and want to group them into distinct buying segments, but you don't know what the segments look like yet. Which model?", options: ["Predictive Classification", "Cluster Analysis", "Optimization Model", "Expert System"], correct: "Cluster Analysis", explanation: "You have unlabeled data and need an unsupervised algorithm to find natural groupings.", tag: "Scenarios" },
+    // =====================================================================
+    // CH 5 & PROVOST 2: DATA MINING DEFINITIONS & CRISP-DM (10 Questions)
+    // =====================================================================
+    { q: "Data mining is defined as the nontrivial process of identifying valid, novel, potentially useful, and understandable patterns in data. It is also known as:", options: ["Knowledge Extraction", "Normative Optimization", "Descriptive Simulation", "Bounded Rationality"], correct: "Knowledge Extraction", explanation: "Data mining = knowledge extraction = pattern analysis. It uncovers hidden insights in large databases.", tag: "Ch 5: Data Mining" },
+    { q: "Which best describes a KEY characteristic of data mining?", options: ["It uses standard formulas to produce structured reports.", "It sits at the intersection of statistics, AI, machine learning, and databases to find hidden patterns.", "It is primarily used for real-time transaction processing.", "It only works with unstructured text data."], correct: "It sits at the intersection of statistics, AI, machine learning, and databases to find hidden patterns.", explanation: "Data mining is cross-disciplinary — it blends stats, AI, ML, and database technology.", tag: "Ch 5: Data Mining" },
+    { q: "Which step of CRISP-DM involves explicitly defining the managerial need and translating it into a data science problem?", options: ["Business Understanding", "Data Understanding", "Data Preparation", "Modeling"], correct: "Business Understanding", explanation: "Business Understanding is step 1 — setting the business objective and planning the project.", tag: "Ch 5: CRISP-DM" },
+    { q: "Which CRISP-DM step involves estimating the costs/benefits of data sources and grasping the structure of the problem (e.g., realizing Medicare fraud lacks a reliable target variable)?", options: ["Business Understanding", "Data Understanding", "Data Preparation", "Evaluation"], correct: "Data Understanding", explanation: "Data Understanding digs beneath the surface to understand data strengths and limitations.", tag: "Ch 5: CRISP-DM" },
+    { q: "Which CRISP-DM step is most time-consuming, taking approximately 80% of the project (cleaning, handling missing values, transforming data)?", options: ["Data Understanding", "Data Preparation", "Modeling", "Evaluation"], correct: "Data Preparation", explanation: "Garbage in, garbage out — data prep is where analysts spend the vast majority of their time.", tag: "Ch 5: CRISP-DM" },
+    { q: "A 'data leak' in the Data Preparation phase means:", options: ["The database server crashes and loses records.", "Historical data contains info about the target variable that wouldn't be available at decision time, causing the model to 'cheat'.", "An unsupervised algorithm deletes anomalous rows.", "Customer privacy is violated in the final report."], correct: "Historical data contains info about the target variable that wouldn't be available at decision time, causing the model to 'cheat'.", explanation: "Leaks let the model use 'future knowledge' during training, producing falsely optimistic accuracy.", tag: "Ch 5: CRISP-DM" },
+    { q: "In CRISP-DM, assessing models to ensure they actually satisfy the original BUSINESS goals — before moving to production — happens during:", options: ["Modeling", "Evaluation", "Deployment", "Business Understanding"], correct: "Evaluation", explanation: "Evaluation checks that the model is both mathematically sound AND practically useful for the business.", tag: "Ch 5: CRISP-DM" },
+    { q: "In CRISP-DM, putting results into real use — integrating a churn model into the customer service system — is which step?", options: ["Evaluation", "Modeling", "Deployment", "Business Understanding"], correct: "Deployment", explanation: "Deployment is the final step where models are integrated into business operations to realize ROI.", tag: "Ch 5: CRISP-DM" },
+    { q: "Simple Split validation divides data into two parts once; k-Fold Cross-Validation divides it into k subsets and trains/tests k times. Why is k-Fold preferred?", options: ["Because it is faster to compute.", "Because it ensures every data point is used for both training and testing, producing a less biased accuracy estimate.", "Because it requires less data preparation.", "Because it only works with unsupervised methods."], correct: "Because it ensures every data point is used for both training and testing, producing a less biased accuracy estimate.", explanation: "k-Fold reduces the variance in performance estimates caused by a lucky or unlucky single split.", tag: "Ch 5: Validation" },
+    { q: "A supervised classification model that acts like a flowchart, recursively splitting data into purer groups based on attributes until a label is reached, is called a:", options: ["Cluster Analysis", "Regression Model", "Decision Tree", "Normative Optimization Model"], correct: "Decision Tree", explanation: "Decision Trees split data recursively using attributes to classify outcomes (e.g., High Risk / Low Risk).", tag: "Ch 5: Models" },
 
-        // --- RAPID RECALL REINFORCEMENT (MIXED) ---
-        { q: "True or False: A DSS is built to replace the human decision-maker.", options: ["True, it automates the entire process.", "False, it aims to support the human, who maintains control over the process."], correct: "False, it aims to support the human, who maintains control over the process.", explanation: "DSS supports—not replaces—human judgment.", tag: "Ch 2: DSS" },
-        { q: "During which CRISP-DM phase are models rigorously assessed to ensure they satisfy the original business goals before being moved to production?", options: ["Data Preparation", "Modeling", "Evaluation", "Deployment"], correct: "Evaluation", explanation: "Evaluation ensures the model actually works for the business case before Deployment.", tag: "Provost 2: CRISP-DM" },
-        { q: "MYCIN and XCON are classic historical examples of what?", options: ["Data Warehouses", "Expert Systems", "Unsupervised Clustering Algorithms", "Descriptive Models"], correct: "Expert Systems", explanation: "MYCIN (medical) and XCON (computer configuration) are the classic examples of early Expert Systems.", tag: "Ch 11: Expert Systems" },
-        { q: "What is the difference between an Expert and Expertise?", options: ["Experts are machines; expertise is human.", "Experts are people with special knowledge; expertise is the task-specific knowledge they possess.", "They mean the exact same thing.", "Experts use math; expertise uses logic."], correct: "Experts are people with special knowledge; expertise is the task-specific knowledge they possess.", explanation: "Experts are the humans; expertise is the explicit and implicit knowledge they hold.", tag: "Ch 11: Expert Systems" },
-        { q: "In CRISP-DM, realizing that Medicare fraud doesn't have a reliable target variable compared to credit card fraud occurs during:", options: ["Business Understanding", "Data Understanding", "Data Preparation", "Deployment"], correct: "Data Understanding", explanation: "Data Understanding involves digging beneath the surface to understand the strengths and limitations of the data sources.", tag: "Provost 2: CRISP-DM" },
-        { q: "A 'trick coin' with heads on both sides is a visual metaphor for:", options: ["Maximum Entropy", "Zero Entropy", "Bounded Rationality", "Satisficing"], correct: "Zero Entropy", explanation: "A trick coin is perfectly predictable (pure), meaning it has zero disorder (zero entropy).", tag: "Provost 3: Visuals" }
-    ];
+    // =====================================================================
+    // PROVOST 1 & 2: CHURN, SUPERVISED vs UNSUPERVISED (8 Questions)
+    // =====================================================================
+    { q: "In predictive analytics, CHURN refers to:", options: ["Customers who make repeat purchases", "Customers switching from one company to another (e.g., leaving when a cell contract expires)", "The noise/disorder in a dataset measured by entropy", "The process of k-fold cross-validation"], correct: "Customers switching from one company to another (e.g., leaving when a cell contract expires)", explanation: "Churn = customer defection. It is a critical and expensive business problem.", tag: "Provost 1: Churn" },
+    { q: "Why do companies invest heavily in predicting customer churn?", options: ["Because government regulations require churn reporting.", "Because acquiring a new customer costs far more than retaining an existing one.", "Because churn models require no labeled target variable.", "Because churn is an unsupervised discovery problem."], correct: "Because acquiring a new customer costs far more than retaining an existing one.", explanation: "Retention is cheaper than acquisition — proactive incentives based on churn predictions save enormous costs.", tag: "Provost 1: Churn" },
+    { q: "What is the FUNDAMENTAL difference between Supervised and Unsupervised data mining?", options: ["Supervised uses numbers; unsupervised uses text.", "Supervised has a pre-defined target variable to predict; unsupervised does not.", "Supervised is done by humans; unsupervised by machines.", "There is no meaningful difference."], correct: "Supervised has a pre-defined target variable to predict; unsupervised does not.", explanation: "Supervised = Target Label (learn to predict it). Unsupervised = No Label (explore natural structures).", tag: "Provost 2: Supervised vs Unsupervised" },
+    { q: "Classification and Regression are examples of:", options: ["Unsupervised Methods", "Supervised Methods", "Normative Models", "Expert Systems"], correct: "Supervised Methods", explanation: "Both predict a specific target — categorical (Classification) or numeric (Regression).", tag: "Provost 2: Methods" },
+    { q: "Clustering and Market-Basket Analysis (Co-occurrence Grouping) are examples of:", options: ["Supervised Methods", "Unsupervised Methods", "Classification Models", "Regression Models"], correct: "Unsupervised Methods", explanation: "They group data without any predefined target variable — purely exploratory.", tag: "Provost 2: Methods" },
+    { q: "To predict a NUMERIC target — 'How much will this customer spend next month?' — which technique should you use?", options: ["Classification", "Regression", "Clustering", "Decision Tree"], correct: "Regression", explanation: "Regression predicts a continuous numeric output. It is a supervised method.", tag: "Provost 2: Methods" },
+    { q: "To predict a CATEGORICAL target — 'Will this customer churn? Yes/No' — which technique should you use?", options: ["Regression", "Clustering", "Classification", "Profiling"], correct: "Classification", explanation: "Classification predicts discrete categories or class labels. It is a supervised method.", tag: "Provost 2: Methods" },
+    { q: "EXAM SCENARIO: 'Do our customers naturally fall into different groups?' — with no specific target variable — is this supervised or unsupervised?", options: ["Supervised, because customers are the target", "Unsupervised, because there is no predefined target or label", "Supervised, because the goal is classification", "Unsupervised, because regression is not applicable"], correct: "Unsupervised, because there is no predefined target or label", explanation: "When you have no specific label to predict and are purely exploring for natural structure, it is unsupervised.", tag: "Provost 2: Supervised vs Unsupervised" },
 
+    // =====================================================================
+    // PROVOST 3: ENTROPY & INFORMATION GAIN (8 Questions)
+    // =====================================================================
+    { q: "In data mining, Entropy measures:", options: ["The speed of the classification algorithm", "The amount of disorder or impurity within a specific set of data", "The number of decision variables in a model", "The financial cost of customer churn"], correct: "The amount of disorder or impurity within a specific set of data", explanation: "Entropy = disorder/impurity. High entropy = mixed group. Low entropy = pure group.", tag: "Provost 3: Entropy" },
+    { q: "A customer segment with EXACTLY a 50/50 split of churned vs. stayed customers has an entropy score that is:", options: ["Zero (minimum)", "Maximum", "0.25", "Negative"], correct: "Maximum", explanation: "A 50/50 split is completely uncertain — maximum disorder, therefore maximum entropy.", tag: "Provost 3: Entropy" },
+    { q: "A segment where EVERY SINGLE customer churned — completely pure — has an entropy score of:", options: ["1.0", "Maximum", "Zero", "0.50"], correct: "Zero", explanation: "Complete purity = zero disorder = zero entropy.", tag: "Provost 3: Entropy" },
+    { q: "Why do we care about Entropy in data mining?", options: ["It calculates expected profit from a decision.", "It is the fundamental measurement used for separating groups and calculating Information Gain.", "It acts as a descriptive simulation.", "It proves a dataset follows bounded rationality."], correct: "It is the fundamental measurement used for separating groups and calculating Information Gain.", explanation: "We measure entropy before and after a split to determine whether the split was useful (Information Gain).", tag: "Provost 3: Entropy" },
+    { q: "Information Gain measures:", options: ["The total number of records in a dataset", "How much an attribute DECREASES entropy — i.e., how much it improves purity", "The increase in disorder caused by a bad attribute split", "The number of folds used in k-fold validation"], correct: "How much an attribute DECREASES entropy — i.e., how much it improves purity", explanation: "Information Gain = drop in entropy. Higher Information Gain = better, more predictive attribute.", tag: "Provost 3: Info Gain" },
+    { q: "EXAM SCENARIO: You are given 4 attributes with entropy scores of 0.95, 0.70, 0.40, and 0.15. You need to build a 2-level decision tree. Which attributes do you choose?", options: ["0.95 and 0.70", "0.70 and 0.40", "0.40 and 0.15", "0.95 and 0.15"], correct: "0.40 and 0.15", explanation: "ALWAYS choose the LOWEST entropy scores. Lower entropy = higher purity = maximum Information Gain.", tag: "Provost 3: Scenario" },
+    { q: "A FAIR COIN (50% heads, 50% tails) is a visual metaphor for:", options: ["Zero Entropy", "High/Maximum Entropy", "Information Gain", "Satisficing"], correct: "High/Maximum Entropy", explanation: "A fair coin's outcome is totally uncertain — maximum disorder = maximum entropy.", tag: "Provost 3: Visuals" },
+    { q: "A TRICK COIN with heads on both sides (100% heads) is a visual metaphor for:", options: ["Maximum Entropy", "Zero Entropy", "Suboptimization", "Normative Modeling"], correct: "Zero Entropy", explanation: "A trick coin's outcome is perfectly predictable — zero disorder = zero entropy.", tag: "Provost 3: Visuals" },
+
+    // =====================================================================
+    // CH 11: EXPERT SYSTEMS (8 Questions)
+    // =====================================================================
+    { q: "Computer-based systems that use specialized knowledge to attain high-level decision performance in a NARROWLY DEFINED domain are called:", options: ["Descriptive Simulations", "Expert Systems", "k-Fold Algorithms", "Data Warehouses"], correct: "Expert Systems", explanation: "Expert Systems (ES) mimic human expert judgment in narrow, specialized fields.", tag: "Ch 11: Expert Systems" },
+    { q: "What is the difference between an EXPERT and EXPERTISE?", options: ["Experts are machines; expertise is human.", "Experts are people with special knowledge and experience; expertise is the task-specific explicit and implicit knowledge they possess.", "They mean the exact same thing.", "Experts use math; expertise uses logic."], correct: "Experts are people with special knowledge and experience; expertise is the task-specific explicit and implicit knowledge they possess.", explanation: "The human IS the expert. The knowledge itself (rules, heuristics, intuition) IS the expertise.", tag: "Ch 11: Expert Systems" },
+    { q: "Instead of mathematical calculations, Expert Systems use logic, 'if-then' rules, and heuristics. This approach is called:", options: ["Normative Optimization", "Symbolic Reasoning", "Descriptive Simulation", "Clustering"], correct: "Symbolic Reasoning", explanation: "ES uses symbols and logical rules rather than algebraic equations.", tag: "Ch 11: Expert Systems" },
+    { q: "An ES has the ability to examine its own reasoning and explain WHY it reached a specific conclusion. This feature is called:", options: ["Deep Knowledge", "Symbolic Reasoning", "Self-Knowledge", "Knowledge Acquisition"], correct: "Self-Knowledge", explanation: "Self-Knowledge is the ES's ability to justify its conclusions to the user.", tag: "Ch 11: Expert Systems" },
+    { q: "Which core ES component contains the facts of the problem and the specialized heuristics/rules (knowledge nuggets)?", options: ["Inference Engine", "Knowledge Base", "User Interface", "Explanation Subsystem"], correct: "Knowledge Base", explanation: "The Knowledge Base is the foundation — it holds all the domain-specific facts and if-then rules.", tag: "Ch 11: Expert Systems" },
+    { q: "Which ES component is considered the 'brain' — the control structure that reasons through the Knowledge Base to formulate conclusions?", options: ["Knowledge Base", "Inference Engine", "Blackboard", "Knowledge Acquisition Facility"], correct: "Inference Engine", explanation: "The Inference Engine applies reasoning logic to the Knowledge Base to arrive at answers.", tag: "Ch 11: Expert Systems" },
+    { q: "The ES component that traces HOW the system reached a conclusion (so the user can ask 'Why did you reach this recommendation?') is the:", options: ["Blackboard", "Knowledge-Refining System", "Explanation Subsystem (Justifier)", "Inference Engine"], correct: "Explanation Subsystem (Justifier)", explanation: "The Justifier provides transparency — the ES's self-knowledge in action.", tag: "Ch 11: Expert Systems" },
+    { q: "MYCIN and XCON are classic historical examples of what type of system?", options: ["Data Warehouses", "Expert Systems", "Unsupervised Clustering Algorithms", "Descriptive Simulation Models"], correct: "Expert Systems", explanation: "MYCIN diagnosed bacterial infections; XCON configured computer systems — both are landmark Expert Systems.", tag: "Ch 11: Expert Systems" },
+
+    // =====================================================================
+    // BIG DATA (5 Questions)
+    // =====================================================================
+    { q: "The '3 Vs' framework defines Big Data. What are they?", options: ["Volume, Variety, Velocity", "Value, Validity, Velocity", "Volume, Value, Visibility", "Variance, Volume, Veracity"], correct: "Volume, Variety, Velocity", explanation: "Big Data = massive Volume, many types of data (Variety), generated at high speed (Velocity). Some models add Veracity and Value.", tag: "Big Data" },
+    { q: "Big Data 'Variety' refers to:", options: ["The enormous size of the dataset in terabytes or petabytes", "The wide range of data types — structured (databases), semi-structured (JSON), and unstructured (social media, video)", "The high speed at which data is generated and must be processed", "The accuracy and trustworthiness of the data"], correct: "The wide range of data types — structured (databases), semi-structured (JSON), and unstructured (social media, video)", explanation: "Variety = the diversity of data formats and sources, from spreadsheets to tweets to sensor data.", tag: "Big Data" },
+    { q: "Big Data 'Velocity' refers to:", options: ["The large quantity of data (petabytes, exabytes)", "The different types of data formats", "The speed at which new data is generated and must be collected and processed", "The reliability of the data sources"], correct: "The speed at which new data is generated and must be collected and processed", explanation: "Velocity = speed. Think real-time stock tickers, social media feeds, and IoT sensor streams.", tag: "Big Data" },
+    { q: "A key challenge of Big Data is that traditional relational database tools CANNOT handle it effectively. What makes Big Data different from standard large datasets?", options: ["Big Data is only useful for government organizations.", "Big Data combines extreme Volume AND Variety AND Velocity simultaneously, breaking traditional processing tools.", "Big Data only refers to unstructured social media data.", "Big Data is simply any dataset larger than 1 terabyte."], correct: "Big Data combines extreme Volume AND Variety AND Velocity simultaneously, breaking traditional processing tools.", explanation: "It's not just size — it's the combination of all three (or more) Vs that creates the challenge.", tag: "Big Data" },
+    { q: "Big Data is most closely tied to which concept from class as the source of raw material for analysis?", options: ["Normative optimization models", "Decision Support Systems providing structured reports", "Data mining and predictive analytics that extract insights from massive, diverse, fast-moving data", "Expert Systems that encode human heuristics into rules"], correct: "Data mining and predictive analytics that extract insights from massive, diverse, fast-moving data", explanation: "Big Data is the raw fuel; data mining and analytics are the engines that extract value from it.", tag: "Big Data" },
+
+    // =====================================================================
+    // CRITICAL EXAM SCENARIOS (5 Questions)
+    // =====================================================================
+    { q: "SCENARIO: You need to diagnose a rare, complex mechanical failure in an aircraft engine based on qualitative symptom patterns. Which model type should you use FIRST?", options: ["Linear Programming (Optimization)", "Cluster Analysis", "Expert System", "Descriptive Simulation"], correct: "Expert System", explanation: "Narrow domain + qualitative if-then reasoning + need to explain conclusions = Expert System.", tag: "Scenarios" },
+    { q: "SCENARIO: You must decide exactly how many units of Product A and B to manufacture to MAXIMIZE profit without exceeding a $50,000 materials budget. Which model?", options: ["Expert System", "Cluster Analysis", "Optimization Model (Linear Programming)", "Descriptive Simulation"], correct: "Optimization Model (Linear Programming)", explanation: "Maximizing a quantitative objective under strict mathematical constraints = normative optimization.", tag: "Scenarios" },
+    { q: "SCENARIO: You want to predict which current telecom customers are most likely to CANCEL service next month, using their past usage data. Which model?", options: ["Descriptive Simulation", "Predictive Classification (Supervised Data Mining)", "Optimization Model", "Expert System"], correct: "Predictive Classification (Supervised Data Mining)", explanation: "Specific categorical target ('Will Cancel: Yes/No') + historical labeled data = supervised classification.", tag: "Scenarios" },
+    { q: "SCENARIO: You want to see how hospital ER wait times change IF you add two extra triage nurses on Saturday nights. Which model?", options: ["Optimization Model", "Cluster Analysis", "Expert System", "Descriptive/Simulation Model"], correct: "Descriptive/Simulation Model", explanation: "You are imitating reality to test 'what-if' configurations without disrupting real operations.", tag: "Scenarios" },
+    { q: "SCENARIO: You have 50,000 retail customers and want to group them into distinct buying segments for targeted marketing, but you DON'T know what the segments look like yet. Which model?", options: ["Predictive Classification", "Cluster Analysis (Unsupervised)", "Optimization Model", "Expert System"], correct: "Cluster Analysis (Unsupervised)", explanation: "No predefined labels + want to find natural groupings = unsupervised cluster analysis.", tag: "Scenarios" },
+
+    // =====================================================================
+    // NORMATIVE MODELING, SIMULATION, PROBLEM DECOMPOSITION (3 Questions)
+    // =====================================================================
+    { q: "What is NORMATIVE MODELING?", options: ["Modeling that describes the current state of reality for 'what-if' testing", "Modeling designed to find the BEST possible alternative, assuming complete rationality and known alternatives", "Modeling that clusters data into natural segments", "Modeling that diagnoses problems using if-then rules"], correct: "Modeling designed to find the BEST possible alternative, assuming complete rationality and known alternatives", explanation: "Normative models prescribe the optimal solution. Example: Linear Programming maximizing profit.", tag: "Ch 2: Models" },
+    { q: "What is SIMULATION (as used in decision modeling)?", options: ["Finding the mathematical optimum for a given objective function", "Imitating real-world operations by computer to test different scenarios without disrupting actual operations", "Training a supervised classification model on historical data", "Classifying a problem by its degree of structuredness"], correct: "Imitating real-world operations by computer to test different scenarios without disrupting actual operations", explanation: "Simulation = descriptive/experimental modeling. It tests 'what-if' without a guarantee of the best outcome.", tag: "Ch 2: Models" },
+    { q: "What is PROBLEM DECOMPOSITION?", options: ["Choosing among alternatives in the Choice phase", "Breaking a large, complex problem into smaller, more manageable subproblems that can be solved individually", "Classifying a problem as structured, semistructured, or unstructured", "Implementing the chosen solution in the real world"], correct: "Breaking a large, complex problem into smaller, more manageable subproblems that can be solved individually", explanation: "Problem decomposition is a key technique in the Intelligence phase to make complex problems tractable.", tag: "Ch 2: Simon's Phases" },
+
+    // =====================================================================
+    // MIXED RAPID RECALL (5 Questions)
+    // =====================================================================
+    { q: "Which CRISP-DM step applies the actual data mining algorithms to the prepared data to build patterns/models?", options: ["Data Preparation", "Modeling", "Evaluation", "Deployment"], correct: "Modeling", explanation: "Modeling is where the algorithms (decision trees, clustering, regression) are actually run on the clean data.", tag: "Ch 5: CRISP-DM" },
+    { q: "Cluster analysis is an UNSUPERVISED method. What does it produce?", options: ["A prediction of a specific numeric target variable", "Natural groupings of items that are highly similar to each other and dissimilar to other groups", "A set of if-then rules encoded in a Knowledge Base", "A ranked list of optimal decisions using normative optimization"], correct: "Natural groupings of items that are highly similar to each other and dissimilar to other groups", explanation: "Clustering finds natural structures — think market segmentation or fraud anomaly detection.", tag: "Ch 5: Models" },
+    { q: "The 'Blackboard (Workplace)' in an Expert System is:", options: ["The interface where rules are coded by the knowledge engineer", "The working memory area recording the current problem, intermediate hypotheses, and the agenda of actions", "The database of historical company transactions", "The self-learning mechanism for improving future reasoning"], correct: "The working memory area recording the current problem, intermediate hypotheses, and the agenda of actions", explanation: "The Blackboard is the ES's scratchpad — it tracks current progress toward a conclusion.", tag: "Ch 11: Expert Systems" },
+    { q: "The notoriously difficult bottleneck process of extracting tacit knowledge from human experts and encoding it into computer rules is called:", options: ["Knowledge Base Assembly", "Knowledge Acquisition", "Symbolic Translation", "Heuristic Routing"], correct: "Knowledge Acquisition", explanation: "Getting implicit knowledge out of a human expert's head is the hardest part of building an Expert System.", tag: "Ch 11: Expert Systems" },
+    { q: "Which of the following is NOT one of the four steps of a decision as listed in Chapter 1?", options: ["Define the problem", "Construct a model describing the real-world problem", "Run a k-fold cross-validation test", "Compare, choose, and recommend a potential solution"], correct: "Run a k-fold cross-validation test", explanation: "The 4 steps: Define problem → Construct model → Identify/evaluate alternatives → Compare/choose/recommend. k-Fold is a data mining validation technique, not a decision step.", tag: "Ch 1: Steps of Decision" }
+
+];
+
+    // =====================================================================
+    // ENGINE CODE
+    // =====================================================================
     let score = 0;
     let attempts = 0;
     let mistakes = [];
     let speedTimer;
+    let speedActive = false;
+    let speedIndex = 0;
+    let speedQuestions = [];
 
-    function shuffle(array) {
-        let currentIndex = array.length, randomIndex;
-        while (currentIndex != 0) {
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
-            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    function shuffle(arr) {
+        let a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
         }
-        return array;
+        return a;
     }
 
-    function renderMCQ(containerId, questions, isReview = false) {
-        const container = document.getElementById(containerId);
+    function renderMCQ() {
+        const container = document.getElementById('mcq-container');
         container.innerHTML = '';
-        
-        questions.forEach((qObj, index) => {
-            let shuffledOptions = shuffle([...qObj.options]);
-            let block = document.createElement('div');
-            block.className = 'question-card';
-            block.innerHTML = `
-                <span class="tag">${qObj.tag}</span><br>
-                <strong>${index + 1}. ${qObj.q}</strong>
-                <div class="options" id="opts-${containerId}-${index}"></div>
-                <div class="explanation" id="exp-${containerId}-${index}">
-                    <strong>Why this works:</strong> ${qObj.explanation}
-                </div>
+        const shuffled = shuffle(questionBank);
+        shuffled.forEach((q, idx) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.id = 'card-' + idx;
+
+            const shuffledOptions = shuffle(q.options);
+            const optionsHTML = shuffledOptions.map(opt =>
+                `<div class="option" onclick="handleAnswer(this, '${opt.replace(/'/g,"\\'")}', '${q.correct.replace(/'/g,"\\'")}', ${idx}, '${q.explanation.replace(/'/g,"\\'")}')">${opt}</div>`
+            ).join('');
+
+            card.innerHTML = `
+                <div class="q-num">Q${idx + 1} of ${shuffled.length}</div>
+                <span class="tag">${q.tag}</span>
+                <p><strong>${q.q}</strong></p>
+                <div class="options">${optionsHTML}</div>
+                <div class="explanation" id="exp-${idx}"><strong>Why:</strong> ${q.explanation}</div>
             `;
-            container.appendChild(block);
-
-            let optsContainer = document.getElementById(`opts-${containerId}-${index}`);
-            shuffledOptions.forEach(opt => {
-                let optDiv = document.createElement('div');
-                optDiv.className = 'option';
-                optDiv.innerText = opt;
-                optDiv.onclick = () => handleAnswer(optDiv, opt, qObj, containerId, index, optsContainer, isReview);
-                optsContainer.appendChild(optDiv);
-            });
+            container.appendChild(card);
         });
+        updateProgress();
     }
 
-    function handleAnswer(element, selected, qObj, containerId, index, optsContainer, isReview) {
-        if(optsContainer.classList.contains('locked')) return;
-        optsContainer.classList.add('locked'); // Prevent double clicking
-
-        let isCorrect = (selected === qObj.correct);
-        document.getElementById(`exp-${containerId}-${index}`).style.display = 'block';
-
-        if (!isReview) {
-            attempts++;
-            if (isCorrect) {
-                score++;
-            } else {
-                if (!mistakes.some(m => m.q === qObj.q)) mistakes.push(qObj);
+    function handleAnswer(el, chosen, correct, idx, explanation) {
+        const card = document.getElementById('card-' + idx);
+        const allOptions = card.querySelectorAll('.option');
+        allOptions.forEach(o => { o.classList.add('disabled', 'locked'); });
+        attempts++;
+        if (chosen === correct) {
+            el.classList.add('correct');
+            score++;
+        } else {
+            el.classList.add('incorrect');
+            allOptions.forEach(o => { if (o.textContent === correct) o.classList.add('correct'); });
+            const q = questionBank.find(q => q.explanation === explanation);
+            if (!mistakes.find(m => m.explanation === explanation)) {
+                mistakes.push(q || { q: card.querySelector('p strong').textContent, options: [], correct, explanation, tag: '' });
+                document.getElementById('mistake-val').textContent = mistakes.length;
             }
-            updateDashboard();
         }
-
-        Array.from(optsContainer.children).forEach(child => {
-            child.classList.add('disabled');
-            if(child.innerText === qObj.correct) {
-                child.classList.add('correct');
-            } else if (child === element && !isCorrect) {
-                child.classList.add('incorrect');
-            }
-        });
-
-        if(isReview && isCorrect) {
-            // Remove from mistakes if they got it right in review
-            mistakes = mistakes.filter(m => m.q !== qObj.q);
-            updateDashboard();
-        }
+        document.getElementById('exp-' + idx).style.display = 'block';
+        document.getElementById('score-val').textContent = score;
+        document.getElementById('attempt-val').textContent = attempts;
+        updateProgress();
     }
 
-    function updateDashboard() {
-        document.getElementById('score-val').innerText = score;
-        document.getElementById('attempt-val').innerText = attempts;
-        document.getElementById('mistake-val').innerText = mistakes.length;
-        renderMistakes();
+    function updateProgress() {
+        const pct = Math.round((attempts / questionBank.length) * 100);
+        document.getElementById('progress-bar').style.width = pct + '%';
     }
 
     function renderMistakes() {
         const container = document.getElementById('mistakes-container');
-        if(mistakes.length === 0) {
-            container.innerHTML = 'No mistakes yet! Keep crushing it.';
-            return;
-        }
-        renderMCQ('mistakes-container', mistakes, true);
-    }
-
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
-        clearInterval(speedTimer);
-        document.getElementById('timer').innerText = "01:00";
-    }
-
-    function startSpeedRound() {
-        const container = document.getElementById('speed-container');
-        let speedQuestions = shuffle([...questionBank]).slice(0, 15); // 15 random questions
-        renderMCQ('speed-container', speedQuestions, false);
-        
-        let timeLeft = 60;
-        document.getElementById('timer').innerText = `00:${timeLeft}`;
-        
-        clearInterval(speedTimer);
-        speedTimer = setInterval(() => {
-            timeLeft--;
-            document.getElementById('timer').innerText = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
-            if(timeLeft <= 0) {
-                clearInterval(speedTimer);
-                container.innerHTML = `<h3>Time's Up!</h3><p>Check your dashboard for your overall score. Go review your mistakes!</p>`;
-            }
-        }, 1000);
-    }
-
-    function renderFlashcards() {
-        const container = document.getElementById('flashcard-container');
-        const prompts = [
-            "Explain Simon's 4 Phases out loud (I Don't Care Internally).",
-            "Explain the difference between a Decision Variable, Parameter, and Result Variable.",
-            "Compare Supervised vs Unsupervised methods (Which one has a target label?).",
-            "How does Entropy relate to Information Gain? (Think of the messy room/trick coin).",
-            "What is the difference between an Inference Engine and a Knowledge Base in an Expert System?",
-            "Name the 6 steps of CRISP-DM and identify the most time-consuming one."
-        ];
+        if (mistakes.length === 0) { container.innerHTML = 'No mistakes yet! Keep crushing it.'; return; }
         container.innerHTML = '';
-        prompts.forEach((p, i) => {
-            container.innerHTML += `<div class="question-card"><strong>Prompt ${i+1}:</strong> ${p}</div>`;
+        mistakes.forEach((q, idx) => {
+            const div = document.createElement('div');
+            div.className = 'question-card';
+            div.innerHTML = `<span class="tag">${q.tag || 'Review'}</span><p><strong>${q.q}</strong></p><p style="color:#00b894;font-weight:bold;">✔ Correct Answer: ${q.correct}</p><div class="explanation" style="display:block"><strong>Why:</strong> ${q.explanation}</div>`;
+            container.appendChild(div);
         });
     }
 
-    // Initialize Standard Mode with all questions randomized
-    renderMCQ('mcq-container', shuffle([...questionBank]));
-    renderFlashcards();
+    function renderFlashcards() {
+        const prompts = [
+            { q: "Name and describe Simon's 4 phases of decision making.", tag: "Ch 2: EXAM QUESTION" },
+            { q: "What is normative modeling? Give an example of when you'd use it.", tag: "Ch 2: EXAM QUESTION" },
+            { q: "What is simulation? How is it different from normative modeling?", tag: "Ch 2: EXAM QUESTION" },
+            { q: "What is problem decomposition? Which phase does it belong to?", tag: "Ch 2: EXAM QUESTION" },
+            { q: "Explain the Gorry and Scott-Morton framework. Which parts are MIS and which are DSS?", tag: "Ch 1: EXAM QUESTION" },
+            { q: "What are the 3 Pressures-Responses-Support components? Give an example of each.", tag: "Ch 1: EXAM QUESTION" },
+            { q: "What is the difference between DSS and BI? Is it just semantics?", tag: "Ch 1: EXAM QUESTION" },
+            { q: "What are the 4 components of the BI architecture?", tag: "Ch 1: EXAM QUESTION" },
+            { q: "What is a Work System? Why is it significant for DSS?", tag: "Ch 1: EXAM QUESTION" },
+            { q: "Explain Decision Variables, Parameters, and Result Variables. Give an example of each.", tag: "Ch 9: EXAM QUESTION" },
+            { q: "What is forecasting and why is it essential for decision modeling?", tag: "Ch 9: EXAM QUESTION" },
+            { q: "What is the CRISP-DM? Name and describe all 6 steps.", tag: "Ch 5: EXAM QUESTION" },
+            { q: "What is the difference between supervised and unsupervised data mining? Give 2 examples of each.", tag: "Provost 2: EXAM QUESTION" },
+            { q: "What is entropy? What does it tell us? Why do we care about it in data mining?", tag: "Provost 3: EXAM QUESTION" },
+            { q: "What is Information Gain? How do you use entropy scores to build a decision tree?", tag: "Provost 3: EXAM QUESTION" },
+            { q: "What is churn? Why does it matter to businesses?", tag: "Provost 1: EXAM QUESTION" },
+            { q: "What are the 3 components (Vs) of Big Data? Describe each.", tag: "Big Data: EXAM QUESTION" },
+            { q: "Name the 5 components of an Expert System and describe what each does.", tag: "Ch 11: EXAM QUESTION" },
+            { q: "What is the difference between an Expert and Expertise? What is Self-Knowledge in an ES?", tag: "Ch 11: EXAM QUESTION" },
+            { q: "What is satisficing? What is suboptimization? How are they different?", tag: "Ch 2: EXAM QUESTION" }
+        ];
+        const container = document.getElementById('flashcard-container');
+        container.innerHTML = '';
+        prompts.forEach((p, i) => {
+            const div = document.createElement('div');
+            div.className = 'question-card';
+            div.innerHTML = `<span class="tag">${p.tag}</span><p><strong>Prompt ${i+1}:</strong> ${p.q}</p><p style="color:#636e72;font-style:italic;">Say your answer OUT LOUD. Then check your notes.</p>`;
+            container.appendChild(div);
+        });
+    }
+
+    // Speed Round
+    function startSpeedRound() {
+        speedQuestions = shuffle(questionBank);
+        speedIndex = 0;
+        speedActive = true;
+        document.getElementById('speed-container').innerHTML = '';
+        let timeLeft = 60;
+        document.getElementById('timer').textContent = '01:00';
+        clearInterval(speedTimer);
+        speedTimer = setInterval(() => {
+            timeLeft--;
+            const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+            const s = String(timeLeft % 60).padStart(2, '0');
+            document.getElementById('timer').textContent = m + ':' + s;
+            if (timeLeft <= 0) {
+                clearInterval(speedTimer);
+                speedActive = false;
+                document.getElementById('timer').textContent = 'Time!';
+            }
+        }, 1000);
+        renderNextSpeedQ();
+    }
+
+    function renderNextSpeedQ() {
+        if (!speedActive || speedIndex >= speedQuestions.length) return;
+        const q = speedQuestions[speedIndex];
+        const container = document.getElementById('speed-container');
+        container.innerHTML = '';
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        const shuffledOptions = shuffle(q.options);
+        const optionsHTML = shuffledOptions.map(opt =>
+            `<div class="option" onclick="handleSpeedAnswer(this, '${opt.replace(/'/g,"\\'")}', '${q.correct.replace(/'/g,"\\'")}')">${opt}</div>`
+        ).join('');
+        card.innerHTML = `<span class="tag">${q.tag}</span><p><strong>${q.q}</strong></p><div class="options">${optionsHTML}</div>`;
+        container.appendChild(card);
+    }
+
+    function handleSpeedAnswer(el, chosen, correct) {
+        if (!speedActive) return;
+        const allOptions = el.parentElement.querySelectorAll('.option');
+        allOptions.forEach(o => o.classList.add('disabled', 'locked'));
+        if (chosen === correct) {
+            el.classList.add('correct');
+        } else {
+            el.classList.add('incorrect');
+            allOptions.forEach(o => { if (o.textContent === correct) o.classList.add('correct'); });
+        }
+        speedIndex++;
+        setTimeout(() => { if (speedActive) renderNextSpeedQ(); }, 800);
+    }
+
+    function switchTab(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.target.classList.add('active');
+        if (id === 'mistakes-mode') renderMistakes();
+        if (id === 'flashcard-mode') renderFlashcards();
+    }
+
+    renderMCQ();
 </script>
 </body>
 </html>
